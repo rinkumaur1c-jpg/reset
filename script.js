@@ -10,6 +10,15 @@ class LinkedList {
 
   get size() { return this._size; }
 
+  // Make the list iterable to support for...of loops
+  *[Symbol.iterator]() {
+    let current = this.head;
+    while (current) {
+      yield current.data;
+      current = current.next;
+    }
+  }
+
   append(data) {
     const node = new Node(data);
     if (!this.head) { this.head = node; }
@@ -277,9 +286,8 @@ function normalizeStudentUsername(name) {
 function generateStudentUsersFromList() {
   let created = false;
   let dirtyStudents = false;
-  let current = state.students.head;
-  while (current) {
-    const student = current.data;
+  
+  for (const student of state.students) {
     const existingUser = user.findByStudentId(student.id);
     if (!student.username) {
       const baseUsername = normalizeStudentUsername(student.name);
@@ -303,7 +311,6 @@ function generateStudentUsersFromList() {
       created = true;
       dirtyStudents = true;
     }
-    current = current.next;
   }
   if (dirtyStudents) saveData();
   return created;
